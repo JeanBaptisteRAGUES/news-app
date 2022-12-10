@@ -13,7 +13,7 @@ function SearchBox() {
         e.preventDefault();
         if(!input) return;
 
-        router.push(`/search/${input}`);
+        router.push(`/search?term=${input}`);
     }
 
     return (
