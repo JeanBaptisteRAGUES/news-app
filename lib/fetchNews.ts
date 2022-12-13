@@ -1,4 +1,5 @@
 import { gql } from "graphql-request";
+import sortNewsByImage from "./sortNewsByImage";
 
 const fetchNews = async (
     category?: Category | string,
@@ -42,10 +43,37 @@ const fetchNews = async (
     `;
 
     // Fetch function with Next.js 13 caching...
+    const res = await fetch('https://pembroke.stepzen.net/api/pugnacious-whippet/__graphql', {
+        method: 'POST',
+        cache: isDynamic ? "no-cache" : "default",
+        next: isDynamic ? { revalidate: 0 } : { revalidate: 20 },
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Apikey ${process.env.STEPZEN_API_KEY}`,
+        },
+        body: JSON.stringify({
+            query: query,
+            variables: {
+                access_key: process.env.MEDIA_STACK_KEY,
+                categories: category,
+                keywords: keywords,
+            },
+        }),
+    });
+
+    console.log(
+        "LOADING NEW DATA FROM API for category >>>",
+        category,
+        keywords
+    );
+
+    const newsResponse = await res.json();
 
     // Sort function by images vs not images present
+    const news = sortNewsByImage(newsResponse.data.myQuery);
 
     // Return result
+    return news;
 };
 
 export default fetchNews;
