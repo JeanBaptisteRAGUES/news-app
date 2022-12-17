@@ -22,6 +22,6 @@ export default NewsCategory;
 // Si on avait écrit à la place news\[id] on aurait ensuite écrit id: category
 export async function generateStaticParams() {
     return categories.map(category => ({
-        category: category
+        category: category,
     }))
 }
